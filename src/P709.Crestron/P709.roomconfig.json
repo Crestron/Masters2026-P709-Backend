@@ -1,0 +1,304 @@
+{
+  "configurationVersion": 3,
+  "roomName": "Masters P709 - Conference Room",
+  "roomSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjQyIDE4IDYxNiAyNjQiIHdpZHRoPSI2MTYiIGhlaWdodD0iMjY0IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkNvbmZlcmVuY2Ugcm9vbSBmdXJuaXR1cmUgbGF5b3V0Ij48dGl0bGU+Q29uZmVyZW5jZSByb29tIGZ1cm5pdHVyZSBsYXlvdXQ8L3RpdGxlPjxzdHlsZT4gICAgLnJvb20tYm91bmRhcnkgeyAgICAgIGZpbGw6IHRyYW5zcGFyZW50OyAgICAgIHN0cm9rZTogcmdiYSgxMjgsIDEyOCwgMTI4LCAwLjYpOyAgICAgIHN0cm9rZS13aWR0aDogMS41OyAgICAgIHN0cm9rZS1kYXNoYXJyYXk6IDYgNDsgICAgfSAgICAucHJvamVjdGlvbi1zY3JlZW4geyAgICAgIGZpbGw6IHRyYW5zcGFyZW50OyAgICAgIHN0cm9rZTogcmdiYSgxMjgsIDEyOCwgMTI4LCAwLjYpOyAgICAgIHN0cm9rZS13aWR0aDogMTsgICAgfSAgICAuc2NyZWVuLWxhYmVsIHsgICAgICBmb250LXNpemU6IDVweDsgICAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyAgICAgIGxldHRlci1zcGFjaW5nOiAwLjFlbTsgICAgICBmaWxsOiByZ2JhKDEyOCwgMTI4LCAxMjgsIDAuODUpOyAgICAgIGZvbnQtZmFtaWx5OiB1aS1tb25vc3BhY2UsIENvbnNvbGFzLCBtb25vc3BhY2U7ICAgIH0gICAgLmJvYXJkLXRhYmxlIHsgICAgICBmaWxsOiB0cmFuc3BhcmVudDsgICAgICBzdHJva2U6IHJnYmEoMTI4LCAxMjgsIDEyOCwgMC42KTsgICAgICBzdHJva2Utd2lkdGg6IDI7ICAgIH0gICAgLnRhYmxlLWlubmVyIHsgICAgICBmaWxsOiB0cmFuc3BhcmVudDsgICAgICBzdHJva2U6IHJnYmEoMTI4LCAxMjgsIDEyOCwgMC40KTsgICAgICBzdHJva2Utd2lkdGg6IDE7ICAgIH0gICAgLmNoYWlyIHsgICAgICBmaWxsOiB0cmFuc3BhcmVudDsgICAgICBzdHJva2U6IHJnYmEoMTI4LCAxMjgsIDEyOCwgMC42KTsgICAgICBzdHJva2Utd2lkdGg6IDE7ICAgIH0gIDwvc3R5bGU+PHJlY3QgY2xhc3M9InJvb20tYm91bmRhcnkiIHg9IjQyIiB5PSIxOCIgd2lkdGg9IjYxNiIgaGVpZ2h0PSIyNjQiIHJ4PSIxMCIgLz48cGF0aCBjbGFzcz0icHJvamVjdGlvbi1zY3JlZW4iIGQ9Ik00Miw2MiBMNDIsMjM4IEw1MCwyMzggUTU0LDIzOCA1NCwyMzQgTDU0LDY2IFE1NCw2MiA1MCw2MiBaIiAvPjx0ZXh0IGNsYXNzPSJzY3JlZW4tbGFiZWwiIHg9IjQ4IiB5PSIxNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRyYW5zZm9ybT0icm90YXRlKC05MCA0OCAxNTApIj4gICAgUFJPSkVDVElPTiBDQU5WQVMgIDwvdGV4dD48cmVjdCBjbGFzcz0iYm9hcmQtdGFibGUiIHg9IjE3MS41IiB5PSIxMDAiIHdpZHRoPSIzNTciIGhlaWdodD0iMTAwIiByeD0iNTAiIC8+PHJlY3QgY2xhc3M9InRhYmxlLWlubmVyIiB4PSIxODMuNSIgeT0iMTEyIiB3aWR0aD0iMzMzIiBoZWlnaHQ9Ijc2IiByeD0iMzgiIC8+PHJlY3QgY2xhc3M9ImNoYWlyIiB4PSIyMTciIHk9IjcyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjAiIHJ4PSI2IiAvPjxyZWN0IGNsYXNzPSJjaGFpciIgeD0iMjc2LjUiIHk9IjcyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjAiIHJ4PSI2IiAvPjxyZWN0IGNsYXNzPSJjaGFpciIgeD0iMzM2IiB5PSI3MiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNiIgLz48cmVjdCBjbGFzcz0iY2hhaXIiIHg9IjM5NS41IiB5PSI3MiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNiIgLz48cmVjdCBjbGFzcz0iY2hhaXIiIHg9IjQ1NSIgeT0iNzIiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyMCIgcng9IjYiIC8+PHJlY3QgY2xhc3M9ImNoYWlyIiB4PSIyMTciIHk9IjIwOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNiIgLz48cmVjdCBjbGFzcz0iY2hhaXIiIHg9IjI3Ni41IiB5PSIyMDgiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyMCIgcng9IjYiIC8+PHJlY3QgY2xhc3M9ImNoYWlyIiB4PSIzMzYiIHk9IjIwOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNiIgLz48cmVjdCBjbGFzcz0iY2hhaXIiIHg9IjM5NS41IiB5PSIyMDgiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyMCIgcng9IjYiIC8+PHJlY3QgY2xhc3M9ImNoYWlyIiB4PSI0NTUiIHk9IjIwOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNiIgLz48cmVjdCBjbGFzcz0iY2hhaXIiIHg9IjE0My41IiB5PSIxMzYiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyOCIgcng9IjYiIC8+PHJlY3QgY2xhc3M9ImNoYWlyIiB4PSI1MzYuNSIgeT0iMTM2IiB3aWR0aD0iMjAiIGhlaWdodD0iMjgiIHJ4PSI2IiAvPjwvc3ZnPg==",
+  "sources": [
+    {
+      "id": "1",
+      "name": "AirMedia",
+      "type": "wirelessPresenter"
+    },
+    {
+      "id": "2",
+      "name": "Laptop 1",
+      "type": "laptopHdmi"
+    },
+    {
+      "id": "3",
+      "name": "Laptop 2",
+      "type": "laptopHdmi"
+    },
+    {
+      "id": "4",
+      "name": "Teams",
+      "type": "other"
+    },
+    {
+      "id": "5",
+      "name": "Signage",
+      "type": "other",
+      "iconSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMS4xIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQwIDEyIDEyKSI+PHBhdGggZD0iTTEwLjYgMC44aDIuOHYzLjRoLTIuOHoiLz48cGF0aCBkPSJNMTEgNC4ydjkuMk0xMyA0LjJ2OS4yIi8+PHBhdGggZD0iTTguMiAxMy40QzYuMiAxMy42IDUuNiAxMS42IDYuMiAxMC4yTDcuNCA4LjYgOSAxMC4yIDEwLjggMTAuMkgxMy4yTDE1IDEwLjIgMTYuNiA4LjYgMTcuOCAxMC4yQzE4LjQgMTEuNiAxNy44IDEzLjYgMTUuOCAxMy40QzE3LjQgMTQuNiAxNy42IDE3IDE2LjYgMTlDMTUuNiAyMSAxMy44IDIyLjggMTIgMjIuOFM4LjQgMjEgNy40IDE5QzYuNCAxNyA2LjYgMTQuNiA4LjIgMTMuNFoiLz48cGF0aCBkPSJNOS42IDE2aDQuOE05LjYgMTguNGg0LjgiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjIwLjYiIHI9Ii41Ii8+PC9nPjwvc3ZnPg=="
+    }
+  ],
+  "lights": [
+    {
+      "id": "1",
+      "name": "Wall Sconces",
+      "type": "dimmer",
+      "iconSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik05IDE3aDZNMTAgMjBoNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==",
+      "positions": [
+        {
+          "xPercent": 50,
+          "yPercent": 0
+        },
+        {
+          "xPercent": 50,
+          "yPercent": 100
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Overhead",
+      "type": "dimmer",
+      "iconSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik05IDE3aDZNMTAgMjBoNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==",
+      "positions": [
+        {
+          "xPercent": 30,
+          "yPercent": 50
+        },
+        {
+          "xPercent": 50,
+          "yPercent": 50
+        },
+        {
+          "xPercent": 70,
+          "yPercent": 50
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Perimeter",
+      "type": "dimmer",
+      "iconSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik05IDE3aDZNMTAgMjBoNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==",
+      "positions": [
+        {
+          "xPercent": 20,
+          "yPercent": 15
+        },
+        {
+          "xPercent": 50,
+          "yPercent": 15
+        },
+        {
+          "xPercent": 80,
+          "yPercent": 15
+        },
+        {
+          "xPercent": 20,
+          "yPercent": 85
+        },
+        {
+          "xPercent": 50,
+          "yPercent": 85
+        },
+        {
+          "xPercent": 80,
+          "yPercent": 85
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Whiteboard",
+      "type": "switch",
+      "iconSvg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik05IDE3aDZNMTAgMjBoNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==",
+      "positions": [
+        {
+          "xPercent": 0,
+          "yPercent": 10
+        },
+        {
+          "xPercent": 0,
+          "yPercent": 90
+        }
+      ]
+    }
+  ],
+  "lightingPresets": [
+    {
+      "id": "high",
+      "name": "High",
+      "levels": [
+        {
+          "lightId": "1",
+          "levelPercent": 100
+        },
+        {
+          "lightId": "2",
+          "levelPercent": 100
+        },
+        {
+          "lightId": "3",
+          "levelPercent": 100
+        },
+        {
+          "lightId": "4",
+          "levelPercent": 100
+        }
+      ]
+    },
+    {
+      "id": "presentation",
+      "name": "Presentation",
+      "levels": [
+        {
+          "lightId": "1",
+          "levelPercent": 30
+        },
+        {
+          "lightId": "2",
+          "levelPercent": 60
+        },
+        {
+          "lightId": "3",
+          "levelPercent": 80
+        },
+        {
+          "lightId": "4",
+          "levelPercent": 0
+        }
+      ]
+    },
+    {
+      "id": "video-call",
+      "name": "Video Call",
+      "levels": [
+        {
+          "lightId": "1",
+          "levelPercent": 90
+        },
+        {
+          "lightId": "2",
+          "levelPercent": 70
+        },
+        {
+          "lightId": "3",
+          "levelPercent": 50
+        },
+        {
+          "lightId": "4",
+          "levelPercent": 40
+        }
+      ]
+    },
+    {
+      "id": "meeting",
+      "name": "Meeting",
+      "levels": [
+        {
+          "lightId": "1",
+          "levelPercent": 80
+        },
+        {
+          "lightId": "2",
+          "levelPercent": 80
+        },
+        {
+          "lightId": "3",
+          "levelPercent": 70
+        },
+        {
+          "lightId": "4",
+          "levelPercent": 60
+        }
+      ]
+    },
+    {
+      "id": "off",
+      "name": "Off",
+      "levels": [
+        {
+          "lightId": "1",
+          "levelPercent": 0
+        },
+        {
+          "lightId": "2",
+          "levelPercent": 0
+        },
+        {
+          "lightId": "3",
+          "levelPercent": 0
+        },
+        {
+          "lightId": "4",
+          "levelPercent": 0
+        }
+      ]
+    }
+  ],
+  "shades": [
+    {
+      "id": "1",
+      "name": "Window Blinds",
+      "type": "roller"
+    },
+    {
+      "id": "2",
+      "name": "Curtains",
+      "type": "curtain"
+    },
+    {
+      "id": "3",
+      "name": "Rear Venetian",
+      "type": "venetian",
+      "supportsTilt": true
+    }
+  ],
+  "shadePresets": [
+    {
+      "id": "meeting",
+      "name": "Meeting",
+      "targets": [
+        {
+          "shadeId": "1",
+          "positionPercent": 40
+        },
+        {
+          "shadeId": "2",
+          "positionPercent": 40
+        },
+        {
+          "shadeId": "3",
+          "positionPercent": 65,
+          "tiltPercent": 40
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "name": "Open",
+      "targets": [
+        {
+          "shadeId": "1",
+          "positionPercent": 100
+        },
+        {
+          "shadeId": "2",
+          "positionPercent": 100
+        },
+        {
+          "shadeId": "3",
+          "positionPercent": 100,
+          "tiltPercent": 0
+        }
+      ]
+    }
+  ],
+  "mcpHubPath": "/hubs/mcp",
+  "concierge": {
+    "baseUrl": "http://172.16.17.15:6002",
+    "roomId": "masters-2026-p709",
+    "token": "demo-concierge-token-2026"
+  },
+  "nvx": {
+    "username": "admin",
+    "password": "admin123",
+    "receiverAddress": "192.168.16.123",
+    "sources": [
+      { "sourceId": "2", "multicastAddress": "239.8.0.211/live.sdp" },
+      { "sourceId": "3", "multicastAddress": "239.8.0.212/live.sdp" }
+    ]
+  }
+}

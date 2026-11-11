@@ -1,0 +1,8 @@
+{
+  "apiPort": 6001,
+  "mcp": {
+    "registrationId": 1,
+    "description": "Conference room with five sources (two over DM-NVX), three dimmable lights and a switched whiteboard light, with lighting presets, and program volume.",
+    "anthropicApiKey": "YOUR-ANTHROPIC-API-KEY"
+  }
+}

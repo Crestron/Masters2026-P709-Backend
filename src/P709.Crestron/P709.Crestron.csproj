@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    SimplSharpPro.deps.json comes from the Crestron SDK package, so its location follows the package version and the
+    machine's NuGet cache; it must never be a fixed path. The property is empty during restore, before the package exists.
+  -->
+  <PropertyGroup>
+    <SimplSharpProDepsJson Condition="'$(PkgCrestron_SimplSharp_SDK_Program)' != ''">$(PkgCrestron_SimplSharp_SDK_Program)\contentFiles\any\net6.0\SimplSharpPro.deps.json</SimplSharpProDepsJson>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(SimplSharpProDepsJson)' != ''">
+    <None Remove="$(SimplSharpProDepsJson)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crestron.SimplSharp.SDK.Program" GeneratePathProperty="true" />
+    <!-- MCP Gateway client (Lab 4). Only this project may reference it: it depends on the Crestron SDK. -->
+    <PackageReference Include="CrestronAgentLib.SimplSharpPro" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\P709.Core\P709.Core.csproj" />
+    <ProjectReference Include="..\P709.Web\P709.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SimplSharpProDepsJson)' != ''">
+    <EmbeddedResource Include="$(SimplSharpProDepsJson)" />
+  </ItemGroup>
+
+  <!--
+    Per-deployment settings (the API port) and the room configuration are data, not code: they are plain files copied beside
+    the program, NOT embedded, so they can be changed on the VC-4 or processor without rebuilding the program.
+  -->
+  <ItemGroup>
+    <None Include="P709.settings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="P709.roomconfig.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

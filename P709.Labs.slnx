@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/P709.Core/P709.Core.csproj" />
+    <Project Path="src/P709.Crestron/P709.Crestron.csproj" />
+    <Project Path="src/P709.Web/P709.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/P709.Core.Tests/P709.Core.Tests.csproj" />
+    <Project Path="tests/P709.Web.Tests/P709.Web.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+</Solution>

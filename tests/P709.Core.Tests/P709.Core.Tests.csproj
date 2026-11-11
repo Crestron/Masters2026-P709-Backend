@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\P709.Core\P709.Core.csproj" />
+  </ItemGroup>
+
+  <!-- The room configuration shipped with the program, so the tests prove the real file loads. -->
+  <ItemGroup>
+    <None Include="..\..\src\P709.Crestron\P709.roomconfig.json" Link="P709.roomconfig.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
