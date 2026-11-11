@@ -1,4 +1,5 @@
 using P709.Core.Configuration;
+using P709.Core.Nvx;
 
 namespace P709.Core.Tests.Configuration;
 
@@ -17,7 +18,8 @@ internal static class RoomConfigTestData
         IReadOnlyList<ShadeConfig>? shades = null,
         string? mcpHubPath = "/hubs/mcp",
         IReadOnlyList<ShadePresetConfig>? shadePresets = null,
-        ConciergeConfig? concierge = null) =>
+        ConciergeConfig? concierge = null,
+        NvxConfig? nvx = null) =>
         new(
             configVersion,
             roomName,
@@ -28,7 +30,18 @@ internal static class RoomConfigTestData
             shades ?? [new ShadeConfig("window", "Window", ShadeType.Roller)],
             mcpHubPath,
             shadePresets,
-            concierge);
+            concierge,
+            nvx);
+
+    public static NvxConfig CreateNvx(
+        string username = "admin",
+        string password = "secret",
+        string receiverAddress = "10.0.0.50",
+        IReadOnlyList<NvxSourceConfig>? sources = null) =>
+        new(username, password, receiverAddress, sources ?? [CreateNvxSource()]);
+
+    public static NvxSourceConfig CreateNvxSource(string sourceId = "tv", string multicastAddress = "239.8.0.21") =>
+        new(sourceId, multicastAddress);
 
     public static ConciergeConfig CreateConcierge(
         string baseUrl = "http://192.168.200.115:5002",

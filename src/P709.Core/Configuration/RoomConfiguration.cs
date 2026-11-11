@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using P709.Core.Nvx;
 
 namespace P709.Core.Configuration;
 
@@ -22,7 +23,7 @@ namespace P709.Core.Configuration;
 /// Optional URL path of the MCP hub, for example <c>/hubs/mcp</c>.
 /// </param>
 /// <param name="Concierge">Optional configuration for the concierge service integration.</param>
-[JsonObject(MissingMemberHandling = MissingMemberHandling.Ignore)]
+/// <param name="Nvx">Optional DM-NVX configuration: the receiver, its login and the multicast stream for each source that arrives over NVX.</param>
 public sealed record RoomConfiguration(
     int ConfigurationVersion,
     string RoomName,
@@ -33,7 +34,8 @@ public sealed record RoomConfiguration(
     IReadOnlyList<ShadeConfig> Shades,
     string? McpHubPath = null,
     IReadOnlyList<ShadePresetConfig>? ShadePresets = null,
-    ConciergeConfig? Concierge = null)
+    ConciergeConfig? Concierge = null,
+    NvxConfig? Nvx = null)
 {
     /// <summary>Name of the room configuration file.</summary>
     public const string FileName = "P709.roomconfig.json";

@@ -76,6 +76,15 @@ public class ShippedRoomConfigTests
         Assert.True("demo-concierge-token-2026" == _config.Concierge.Token, $"concierge token was {_config.Concierge.Token}.");
     }
 
+    [Fact(DisplayName = "TEST11: The shipped file routes the two HDMI laptops over NVX.")]
+    public void ShippedFile_HasNvxRoutesForLaptops()
+    {
+        Assert.True(_config.Nvx is not null, "Expected an nvx section.");
+        var routed = _config.Nvx!.Sources.Select(source => source.SourceId).OrderBy(id => id);
+
+        Assert.True(new[] { "2", "3" }.SequenceEqual(routed), $"Unexpected NVX sources: {string.Join(", ", routed)}.");
+    }
+
     [Fact(DisplayName = "TEST7: Every preset refers only to lights that still exist.")]
     public void ShippedFile_PresetLevels_ReferenceExistingLights()
     {

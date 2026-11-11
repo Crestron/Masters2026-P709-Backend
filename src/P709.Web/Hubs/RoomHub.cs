@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 using P709.Core.Configuration;
 using P709.Core.Connection;
+using P709.Core.Nvx;
+using P709.Web.Nvx;
 
 namespace P709.Web.Hubs;
 
@@ -8,7 +10,7 @@ namespace P709.Web.Hubs;
 /// Hub the front-end connects to. Exposes the configuration query plus commands and their corresponding change events,
 /// per the Unified Room Control API.
 /// </summary>
-public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, ILogger<RoomHub> logger) : Hub
+public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, NvxRouter nvxRouter, ILogger<RoomHub> logger) : Hub
 {
     /// <summary>URL path the hub is mapped to: the same path published to the panel in the connection details.</summary>
     public const string Path = ConnectionDetails.HubPath;
@@ -263,7 +265,9 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
     }
 
     /// <summary>
-    /// Source routing command: selects the active source. If the system is off, this also starts it up.
+    /// Source routing command: selects the active source. If the system is off, this also starts it up. A source that arrives
+    /// over NVX is routed to the display first. The source is selected even if the NVX fails (it may be offline), so the rest
+    /// of the room keeps working; the stream is then reported as not running.
     /// </summary>
     public async Task SelectSource(string sourceId)
     {
@@ -274,6 +278,96 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
 
         roomState.SelectSource(sourceId);
         await Clients.All.SendAsync("SelectedSourceChanged", sourceId);
+
+        // TODO: Lab 2.5b - Route the selected source over NVX
+        // Hint: Only for a source the nvxRouter HasRoute for: try to route it with TryRouteAsync BEFORE changing the room
+        //       state. Select the source either way: an offline NVX must not stop the room working. After
+        //       SelectedSourceChanged has been sent, record whether the stream is running (whether the route worked) and
+        //       broadcast StreamRunningChanged.
+        // Ref:  The README.md holds definition of the SignalR API
+        // Add your work below this line
+
+        // Lab 2.5b - End
+    }
+
+    /// <summary>
+    /// Query: the URL of the NVX receiver's preview image, <c>/nvx/preview</c>, relative to the hub's host. Null when the room
+    /// has no NVX receiver.
+    /// </summary>
+    public string? GetPreviewUrl() => nvxRouter.IsConfigured ? NvxPreviewEndpoint.Path : null;
+
+    /// <summary>NVX command: starts or stops the receiver's stream, keeping the routed source.</summary>
+    public async Task SetStreamRunning(bool isRunning)
+    {
+        if (!nvxRouter.IsConfigured)
+        {
+            throw new HubException("This room has no NVX receiver.");
+        }
+
+        await RunNvxAsync(isRunning ? "Could not start the stream" : "Could not stop the stream",
+            () => nvxRouter.SetStreamRunningAsync(isRunning, Context.ConnectionAborted));
+
+        roomState.SetStreamRunning(isRunning);
+        await Clients.All.SendAsync("StreamRunningChanged", isRunning);
+    }
+
+    /// <summary>NVX command: turns the receiver's preview images on or off.</summary>
+    public async Task SetPreviewEnabled(bool isEnabled)
+    {
+        if (!nvxRouter.IsConfigured)
+        {
+            throw new HubException("This room has no NVX receiver.");
+        }
+
+        await RunNvxAsync(isEnabled ? "Could not turn the preview on" : "Could not turn the preview off",
+            () => nvxRouter.SetPreviewEnabledAsync(isEnabled, Context.ConnectionAborted));
+
+        await Clients.All.SendAsync("PreviewEnabledChanged", isEnabled);
+    }
+
+    // Routes an NVX source, returning whether it worked. A failure is logged (see LogNvxFailure) but never thrown: the source
+    // is selected whether or not the NVX is there.
+    private async Task<bool> TryRouteAsync(string sourceId)
+    {
+        try
+        {
+            return await nvxRouter.RouteSourceAsync(sourceId, Context.ConnectionAborted);
+        }
+        catch (NvxException exception)
+        {
+            LogNvxFailure($"Could not route source \"{sourceId}\"", exception);
+            return false;
+        }
+    }
+
+    // Runs an NVX call. A failure is logged (see LogNvxFailure), then turned into a HubException so the client sees why,
+    // with the NVX's own message included.
+    private async Task RunNvxAsync(string failure, Func<Task> nvxCall)
+    {
+        try
+        {
+            await nvxCall();
+        }
+        catch (NvxException exception)
+        {
+            LogNvxFailure(failure, exception);
+            throw new HubException($"{failure}: {exception.Message}");
+        }
+    }
+
+    // An NVX that refused a request is logged as an error (on a processor: the Crestron error log, through the program's
+    // logger factory). An offline NVX is only logged at debug level: its going offline and coming back are each logged once
+    // by the web host, so a panel used while it is offline does not fill the error log.
+    private void LogNvxFailure(string failure, NvxException exception)
+    {
+        if (exception is NvxUnreachableException)
+        {
+            logger.LogDebug("{Failure}: {Reason}", failure, exception.Message);
+        }
+        else
+        {
+            logger.LogError(exception, "{Failure}: {Reason}", failure, exception.Message);
+        }
     }
 
     // Runs the Off -> Starting -> On sequence, broadcasting each transition.

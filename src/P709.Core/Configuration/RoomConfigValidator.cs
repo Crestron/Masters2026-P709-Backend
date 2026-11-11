@@ -1,5 +1,8 @@
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using P709.Core.Connection;
+using P709.Core.Nvx;
 
 namespace P709.Core.Configuration;
 
@@ -148,11 +151,59 @@ public static class RoomConfigValidator
             }
         }
 
+        if (config.Nvx is not null)
+        {
+            CheckNvx(config.Nvx, sources.Select(source => source.Id).ToHashSet(), problems);
+        }
+
         if (problems.Count > 0)
         {
             throw new InvalidConfigurationException("Invalid room configuration: " + string.Join(" ", problems));
         }
     }
+
+    // The nvx section is optional; when present, every source it routes must exist and every address must be usable,
+    // so a typo shows up at start-up rather than as a blank display.
+    private static void CheckNvx(NvxConfig nvx, HashSet<string> sourceIds, List<string> problems)
+    {
+        if (string.IsNullOrWhiteSpace(nvx.Username))
+        {
+            problems.Add("nvx username is required.");
+        }
+
+        if (nvx.Password is null)
+        {
+            problems.Add("nvx password is required.");
+        }
+
+        if (!IsHost(nvx.ReceiverAddress))
+        {
+            problems.Add($"nvx receiverAddress must be an IP address or host name, was \"{nvx.ReceiverAddress}\".");
+        }
+
+        var nvxSources = nvx.Sources ?? [];
+
+        if (nvxSources.Count == 0)
+        {
+            problems.Add("nvx needs at least one entry in sources.");
+        }
+
+        foreach (var duplicate in nvxSources.Where(source => !string.IsNullOrWhiteSpace(source.SourceId)).GroupBy(source => source.SourceId).Where(group => group.Count() > 1))
+        {
+            problems.Add($"nvx sources has more than one entry for source \"{duplicate.Key}\".");
+        }
+
+        foreach (var source in nvxSources)
+        {
+            if (!sourceIds.Contains(source.SourceId))
+            {
+                problems.Add($"nvx source \"{source.SourceId}\" is not one of the room's sources.");
+            }
+        }
+    }
+
+    private static bool IsHost(string? address) =>
+        !string.IsNullOrWhiteSpace(address) && Uri.CheckHostName(address) is UriHostNameType.IPv4 or UriHostNameType.Dns;
 
     private static void CheckIds(string collection, IEnumerable<string> ids, List<string> problems)
     {

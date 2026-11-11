@@ -1,8 +1,10 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using P709.Core.Configuration;
+using P709.Core.Nvx;
 using P709.Web.Hubs;
 using P709.Web.Infrastructure;
+using P709.Web.Nvx;
 
 namespace P709.Web;
 
@@ -20,11 +22,35 @@ public static class WebHost
         await app.RunAsync(cancellationToken);
     }
 
+    /// <summary>Log category for the NVX going offline and coming back.</summary>
+    public const string NvxConnectivityLogCategory = "P709.Web.Nvx.NvxConnectivity";
+
+    // Logs the NVX receiver going offline (a warning: the Crestron error log) and coming back, once each. Every request made
+    // while it is offline fails at once and is logged only at debug level, so an offline NVX does not fill the log.
+    private static void LogNvxConnectivity(WebApplication app)
+    {
+        var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger(NvxConnectivityLogCategory);
+
+        app.Services.GetRequiredService<NvxRouter>().ConnectivityChanged += change =>
+        {
+            if (change.IsOnline)
+            {
+                logger.LogInformation("The NVX at {Address} is back online.", change.Address);
+            }
+            else
+            {
+                logger.LogWarning("The NVX at {Address} is offline: {Reason} Sources still switch; the NVX is retried every {Seconds:0} seconds.",
+                    change.Address, change.Reason, NvxConnectivityGuard.RetryInterval.TotalSeconds);
+            }
+        };
+    }
+
     /// <summary>Builds the web application without starting it.</summary>
     /// <param name="roomConfiguration">The room configuration the hub returns from GetRoomConfiguration.</param>
     /// <param name="loggerFactory">Optional caller-owned logger factory that receives all web host logging.</param>
     /// <param name="port">Port to listen on. Null leaves Kestrel on its default.</param>
-    public static WebApplication Build(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null)
+    /// <param name="nvxReceiver">The client for the NVX receiver. Null makes a real one from the room's <c>nvx</c> section; tests pass a fake.</param>
+    public static WebApplication Build(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null, INvxClient? nvxReceiver = null)
     {
         // Embedded hosts have an unrelated working directory and their own process args.
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -60,6 +86,14 @@ public static class WebHost
         builder.Services.AddSingleton(roomConfiguration);
         builder.Services.AddSingleton<RoomState>();
         // REF: Lab 1.1c - End
+
+        // TODO: Lab 2.5a - Register the NVX router as a singleton
+        // Hint: When the room has an nvx section, make an NvxRestClient for its ReceiverAddress with its Username and Password
+        //       (unless the tests passed in nvxReceiver). Then register one NvxRouter made from roomConfiguration.Nvx and that
+        //       client, so the hub and the preview endpoint share it, and its NVX session, for the life of the program.
+        // Add your work below this line
+
+        // Lab 2.5a - End
 
         // TODO: Lab 1.1a - Register SignalR, using Newtonsoft.Json for the hub payloads
         // Hint: We want to add the SignalR service to the web app builder.
@@ -97,6 +131,8 @@ public static class WebHost
 
         var app = builder.Build();
 
+        LogNvxConnectivity(app);
+
         app.UseCors();
         // TODO: Lab 1.1b - Map the SignalR hub at its path
         // Hint: Finally, we need to tell app to map the SignalR hub using the controller implementation and
@@ -114,6 +150,12 @@ public static class WebHost
         //    options.Transports = HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents;
         // });
         // REF: Lab 1.1b - End
+
+        // TODO: Lab 2.5c - Map the NVX preview endpoint
+        // Hint: NvxPreviewEndpoint has an extension method that maps GET /nvx/preview/{sourceId} on the app.
+        // Add your work below this line
+
+        // Lab 2.5c - End
 
         // We haven't registered any health checks, but the default /health endpoint is
         // still useful to see if the server is running.
