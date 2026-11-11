@@ -55,7 +55,12 @@ public sealed record RoomConfiguration(
 
         // Lab 0.1 - End
 
-        return null;
+        // REF: Lab 0.1 - Load the room configuration JSON file and validate it
+        var config = JsonConfigFile.Load<RoomConfiguration>(Path.Combine(folder, FileName));
+        RoomConfigValidator.Validate(config);
+
+        return config;
+        // REF: Lab 0.1 - End
     }
 }
 

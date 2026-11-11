@@ -153,6 +153,17 @@ The tasks are listed below:
 |---|---|---|---|
 | 0.1 | `RoomConfiguration.Load` | Load and validate the room configuration | Students introduced to the project, see how a user file can be loaded and validated |
 | 0.2 | `ControlSystem.InitializeSystem` | Start the web host on the configured port | How to start an ASP.NET Core host in a Crestron program |
+| 1.1a | `WebHost.Build` | Register SignalR with Newtonsoft.Json | How to configure SignalR to use Newtonsoft.Json for payloads, so that the client can deserialize them |
+| 1.1b | `WebHost.Build` | Map the SignalR rooms hub | Plumbing... How to map a SignalR hub to a URL in an ASP.NET Core host |
+| 1.1c | `WebHost.Build` | Register the room configuration and state as singletons | How to register a singleton service in an ASP.NET Core host, so that the hub can use it |
+| 1.1d | `ControlSystem.OnPanelOnlineStatusChange` | Publish when the panel comes online | How to publish the connection details to the touch panel when it comes online, so that it can connect to the SignalR hub |
+| 1.2a | `RoomHub.GetRoomConfiguration` | Query: return the room configuration | How to implement a SignalR hub method that returns the room configuration to the client upon request |
+| 1.2b | `RoomHub.OnConnectedAsync` | Send the current power state to a new client | How to send the current state of the room to a new client when it connects, so that it can update its UI to match the room state |
+| 1.3 | `RoomHub.SetLightLevel` and `RoomHub.SelectPreset` | Command: set a light level or select a preset, and broadcast the change to every client | More SignalR hub methods, showing how to change the room state and broadcast the change to all clients |
+| 1.4 | `RoomHub.SetVolumeLevel` | Command: set the volume in the room state, and broadcast the new value to every client | More SignalR hub methods, showing how to change the room state and broadcast the change to all clients |
+| Stretch goal | For anybody with time on their hands | | |
+| 1.5a | `UI Project` | Add the shades component to the UI to invoke the existing shades code | |
+| 1.5b+c | `RoomHub.StartSystemAsync` | Broadcast each step of the power-up/down sequence to clients asynchronously | Asynchronous broadcasts to clients |
 
 ## Connection
 

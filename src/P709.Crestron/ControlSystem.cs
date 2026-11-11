@@ -86,6 +86,25 @@ public class ControlSystem : CrestronControlSystem
 
         // Lab 0.2 - End
 
+        // REF: Lab 0.2 - Start the non-Crestron web host on the configured port
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await WebHost.RunAsync(roomConfiguration, loggerFactory, settings.ApiPort, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                ErrorLog.Notice("Normal Shutdown");
+                // Normal shutdown.
+            }
+            catch (Exception exception)
+            {
+                ErrorLog.Error("Web host failed: {0}", exception);
+            }
+        }, cancellationToken);
+        // REF: Lab 0.2 - End
+
         ErrorLog.Notice($"Control System Initialized (API port {settings.ApiPort})");
     }
 
