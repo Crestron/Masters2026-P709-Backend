@@ -101,6 +101,19 @@ public sealed class NvxRestClient : INvxClient, IDisposable
 
             // Lab 2.1a - End
 
+            // REF: Lab 2.1a - Send the username and password to the NVX
+            using var loginRequest = new HttpRequestMessage(HttpMethod.Post, LoginPath)
+            {
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["login"] = _username,
+                    ["passwd"] = _password
+                })
+            };
+
+            using var loginResponse = await SendAsync(loginRequest, cancellationToken);
+            // REF: Lab 2.1a - End
+
             // Step 3: check the NVX accepted the login.
             // TODO: Lab 2.1b - Check the login worked
             // Hint: SendAsync has stored every cookie the reply set. The NVX only sets the AuthByPasswd cookie when the
@@ -109,6 +122,13 @@ public sealed class NvxRestClient : INvxClient, IDisposable
             // Add your work below this line
 
             // Lab 2.1b - End
+
+            // REF: Lab 2.1b - Check the login worked
+            if (!HasCookie(AuthCookieName))
+            {
+                throw new NvxException($"The NVX at {Address} rejected the login for \"{_username}\" (HTTP {(int)loginResponse.StatusCode}).");
+            }
+            // REF: Lab 2.1b - End
 
             _isLoggedIn = true;
         }

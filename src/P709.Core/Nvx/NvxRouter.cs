@@ -68,6 +68,12 @@ public sealed class NvxRouter(NvxConfig? config, INvxClient? receiver, TimeProvi
 
         // Lab 2.2b - End
 
+        // REF: Lab 2.2b - Route the source's multicast stream to the receiver
+        await receiver.SetReceiveMulticastAddressAsync(route.MulticastAddress, cancellationToken);
+        await receiver.StartReceiveAsync(cancellationToken);
+        await receiver.SetPreviewEnabledAsync(true, cancellationToken);
+        // REF: Lab 2.2b - End
+
         return true;
     }
 
@@ -86,6 +92,17 @@ public sealed class NvxRouter(NvxConfig? config, INvxClient? receiver, TimeProvi
         // Add your work below this line
 
         // Lab 2.3b - End
+
+        // REF: Lab 2.3b - Start or stop the receiver's stream
+        if (isRunning)
+        {
+            await receiver.StartReceiveAsync(cancellationToken);
+        }
+        else
+        {
+            await receiver.StopReceiveAsync(cancellationToken);
+        }
+        // REF: Lab 2.3b - End
 
         return true;
     }
@@ -123,7 +140,19 @@ public sealed class NvxRouter(NvxConfig? config, INvxClient? receiver, TimeProvi
 
         // Lab 2.4b - End
 
-        return null;
+        // REF: Lab 2.4b - Fetch the receiver's preview image
+        var preview = await receiver.GetPreviewAsync(cancellationToken);
+
+        if (!preview.IsEnabled)
+        {
+            throw new NvxPreviewUnavailableException($"Previews are turned off on the NVX at {receiver.Address}.");
+        }
+
+        var image = preview.Largest()
+            ?? throw new NvxPreviewUnavailableException($"The NVX at {receiver.Address} has no preview image ready yet.");
+
+        return await receiver.DownloadImageAsync(image.Url, cancellationToken);
+        // REF: Lab 2.4b - End
     }
 }
 
