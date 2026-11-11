@@ -56,6 +56,11 @@ public static class WebHost
 
         // Lab 1.1c - End
 
+        // REF: Lab 1.1c - Register the room configuration and state as singletons
+        builder.Services.AddSingleton(roomConfiguration);
+        builder.Services.AddSingleton<RoomState>();
+        // REF: Lab 1.1c - End
+
         // TODO: Lab 1.1a - Register SignalR, using Newtonsoft.Json for the hub payloads
         // Hint: We want to add the SignalR service to the web app builder.
         //       The returned signalR builder should then be configured to support the Newtonsoft Json Protocol
@@ -65,6 +70,23 @@ public static class WebHost
         // Add your work below this line
 
         // Lab 1.1a - End
+
+        // REF: Lab 1.1a - Register SignalR, using Newtonsoft.Json for the hub payloads
+        // Newtonsoft.Json is the chosen serialiser, so hub payloads use it too: camelCase names and enums as their
+        // EnumMember strings, which is what the Svelte client expects.
+        var signalR = builder.Services.AddSignalR(options =>
+        {
+            // Send exception details to the client. Useful in a lab; turn off in production.
+            options.EnableDetailedErrors = true;
+        });
+
+        signalR.AddNewtonsoftJsonProtocol(options =>
+        {
+            var json = options.PayloadSerializerSettings;
+            json.ContractResolver = new CamelCasePropertyNamesContractResolver(); // roomName, not RoomName
+            json.Converters.Add(new StringEnumConverter());                       // "on", not 1
+        });
+        // REF: Lab 1.1a - End
 
         builder.Services.AddHealthChecks();
         builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
@@ -82,6 +104,16 @@ public static class WebHost
         // Add your work below this line
 
         // Lab 1.1b - End
+
+        // REF: Lab 1.1b - Map the SignalR hub at its path
+        app.MapHub<RoomHub>(RoomHub.Path);
+
+        // You could force a particular transport if you wish
+        // app.MapHub<RoomHub>(RoomHub.Path, options =>
+        // {
+        //    options.Transports = HttpTransportType.WebSockets | HttpTransportType.ServerSentEvents;
+        // });
+        // REF: Lab 1.1b - End
 
         // We haven't registered any health checks, but the default /health endpoint is
         // still useful to see if the server is running.

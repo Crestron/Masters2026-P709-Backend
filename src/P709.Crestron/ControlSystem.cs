@@ -116,6 +116,13 @@ public class ControlSystem : CrestronControlSystem
         // Add your work below this line
 
         // Lab 1.1d - End
+
+        // REF: Lab 1.1d - Publish the connection details whenever the panel comes online
+        if (args.DeviceOnLine && _publisher is not null && !_publisher.Publish())
+        {
+            ErrorLog.Warn("No host address available to publish SignalR connection details");
+        }
+        // REF: Lab 1.1d - End
     }
 
     private void OnProgramStatusEvent(eProgramStatusEventType programEventType)

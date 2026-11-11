@@ -24,6 +24,11 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
 
     // Lab 1.2a - End
 
+    // REF: Lab 1.2a - Query: return the room configuration to the client
+    /// <summary>Query: the front-end calls this after connecting to learn how to build its UI.</summary>
+    public RoomConfiguration GetRoomConfiguration() => roomConfiguration;
+    // REF: Lab 1.2a - End
+
     // TODO: Lab 1.3 - Hook up the lighting SignalR commands
     // Hint: Add public methods for each of the commands for setting the light level and selecting a preset.
     //       Each method should update the roomState and broadcast the corresponding change event to all clients.
@@ -31,6 +36,42 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
     // Add your work below this line
 
     // Lab 1.3 - End
+
+    // REF: Lab 1.3 - Hook up the lighting SignalR commands
+    /// <summary>Lighting command: sets a light's level.</summary>
+    /// <remarks>Note! The usual C# Async naming convention is not used here.</remarks>
+    public async Task SetLightLevel(string lightId, int levelPercent)
+    {
+        roomState.SetLightLevel(lightId, levelPercent);
+        await Clients.All.SendAsync("LightLevelChanged", lightId, levelPercent);
+    }
+
+    /// <summary>Lighting command: recalls a preset, applying and broadcasting each light level it sets, then broadcasting PresetSelected.</summary>
+    public async Task SelectPreset(SelectPresetRequest request)
+    {
+        if (request is null)
+        {
+            return;
+        }
+
+        var preset = roomConfiguration.LightingPresets.FirstOrDefault(p => p.Id == request.PresetId);
+
+        if (preset is null)
+        {
+            throw new HubException($"Unknown preset id \"{request.PresetId}\".");
+        }
+
+        foreach (var level in preset.Levels)
+        {
+            roomState.SetLightLevel(level.LightId, level.LevelPercent);
+
+            await Clients.All.SendAsync("LightLevelChanged", level.LightId, level.LevelPercent);
+        }
+
+        roomState.SetSelectedPreset(request.PresetId);
+        await Clients.All.SendAsync("PresetSelected", request.PresetId);
+    }
+    // REF: Lab 1.3 - End
 
     /// <summary>
     /// Query: a snapshot of the whole room state, so a client that has just connected (or reconnected) can show the room
@@ -180,6 +221,15 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
 
     // Lab 1.4 - End
 
+    // REF: Lab 1.4 - Command: set the volume level in the room state
+    /// <summary>Volume command: sets the volume level.</summary>
+    public async Task SetVolumeLevel(int levelPercent)
+    {
+        roomState.SetVolumeLevel(levelPercent);
+        await Clients.All.SendAsync("VolumeLevelChanged", levelPercent);
+    }
+    // REF: Lab 1.4 - End
+
     // TODO: Lab 1.2b - Implement the Hub.OnConnectedAsync override
     // Hint: Implement an override for the Hub<> connection event handler
     //       call the base implementation to maintain the standard behaviour
@@ -188,6 +238,15 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
     // Add your work below this line
 
     // Lab 1.2b - End
+
+    // REF: Lab 1.2b - Implement the Hub.OnConnectedAsync override
+    /// <inheritdoc />
+    public override async Task OnConnectedAsync()
+    {
+        await base.OnConnectedAsync();
+        await Clients.Caller.SendAsync("SystemPowerStateChanged", roomState.SystemPower);
+    }
+    // REF: Lab 1.2b - End
 
     /// <summary>Page synchronization command: tells other clients which page is current.</summary>
     public async Task SetCurrentPage(PageKey pageKey)
@@ -228,6 +287,16 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
         // Add your work below this line
 
         // Lab 1.5b - End
+
+        // REF: Lab 1.5b - Broadcast each step of the power-up sequence (Starting, then On)
+        roomState.SetSystemPower(SystemPowerState.Starting);
+        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Starting);
+
+        await Task.Delay(PowerSequenceDuration);
+
+        roomState.SetSystemPower(SystemPowerState.On);
+        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.On);
+        // REF: Lab 1.5b - End
     }
 
     // Runs the On -> Stopping -> Off sequence, broadcasting each transition.
@@ -241,6 +310,16 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, I
         // Add your work below this line
 
         // Lab 1.5c - End
+
+        // REF: Lab 1.5c - Broadcast each step of the power-off sequence (Stopping, then Off)
+        roomState.SetSystemPower(SystemPowerState.Stopping);
+        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Stopping);
+
+        await Task.Delay(PowerSequenceDuration);
+
+        roomState.SetSystemPower(SystemPowerState.Off);
+        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Off);
+        // REF: Lab 1.5c - End
     }
 }
 
