@@ -67,11 +67,6 @@ public sealed class RoomTools(
         // Add your work below this line
 
         // Lab 4.4 - End
-
-        // REF: Lab 4.4 - Set the light level for the AI, and tell every panel
-        roomState.SetLightLevel(light.Id, level);
-        await Panels.SendAsync("LightLevelChanged", light.Id, level);
-        // REF: Lab 4.4 - End
     }
 
     /// <summary>Recalls the preset at <paramref name="index"/>, as <see cref="RoomHub.SelectPreset"/> does.</summary>

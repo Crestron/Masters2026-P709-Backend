@@ -56,19 +56,6 @@ internal static class McpRegistration
 
         // Lab 4.3 - End
 
-        // REF: Lab 4.3 - Let the AI read and set the light levels
-        room.AddAnalogGetter("Light_Level_Feedback", "Returns the light level feedback from 0d to 100d",
-            lights.Select(i => (Func<ushort>)(() => tools.GetLightLevel(i))).ToList(),
-            unit: "light_percent", itemNames: tools.LightNames);
-
-        room.AddAnalogTrigger("Light_Level_Trigger", "Set the light level value for a specific light",
-            lights.Select(i => (Action<ushort>)(level => Run("Light_Level_Trigger", () => tools.SetLightLevelAsync(i, level)))).ToList(),
-            0, 100, "light_percent", "Light_Level_Feedback", 3000, tools.LightNames);
-
-        room.AddSerialGetter("Light_Level_Names",
-            "The names (in order) for the light levels that are exposed through the Trigger and Fb modules", tools.LightNames);
-        // REF: Lab 4.3 - End
-
         // TODO: Lab 4.6 (Stretch goal) - Let the AI recall lighting presets, and set the volume and mute
         // Hint: Presets work like Lab 4.3, but digital: a getter "Light_Level_Preset_Fb" (is each preset the current scene?), a
         //       trigger "Light_Level_Preset_Trigger" (one Action per preset, no "off" actions, read back after 3000 ms) and a
@@ -78,28 +65,6 @@ internal static class McpRegistration
 
         // Lab 4.6 - End
 
-        // REF: Lab 4.6 (Stretch goal) - Let the AI recall lighting presets, and set the volume and mute
-        room.AddDigitalGetter("Light_Level_Preset_Fb", "Return light level preset feedback status",
-            presets.Select(i => (Func<bool>)(() => tools.IsPresetSelected(i))).ToList(), tools.PresetNames);
-
-        room.AddDigitalTrigger("Light_Level_Preset_Trigger", "Trigger a specific lighting preset",
-            presets.Select(i => (Action)(() => Run("Light_Level_Preset_Trigger", () => tools.SelectPresetAsync(i)))).ToList(),
-            feedbackTool: "Light_Level_Preset_Fb", maxTimeToExecuteMs: 3000, itemNames: tools.PresetNames);
-
-        room.AddSerialGetter("Light_Level_Preset_Names",
-            "The names (in order) for the light presets that are exposed through the Trigger and Fb modules", tools.PresetNames);
-
-        room.AddAnalogGetter("Volume_Level_Fb", "Returns the current volume level in the room", tools.GetVolumeLevel, "volume_percent");
-        room.AddAnalogTrigger("Volume_Level_Trigger", "Sets the volume level in the room",
-            level => Run("Volume_Level_Trigger", () => tools.SetVolumeLevelAsync(level)),
-            0, 100, "volume_percent", "Volume_Level_Fb", 1000);
-
-        room.AddDigitalGetter("Volume_Mute_Fb", "Returns the current state of volume mute in the room", tools.IsAudioMuted);
-
-        room.AddDigitalTrigger("Volume_Mute_Trigger", "Turns the volume mute on or off in the room",
-            isMuted => Run("Volume_Mute_Trigger", () => tools.SetAudioMutedAsync(isMuted)), "Volume_Mute_Fb", 500);
-        // REF: Lab 4.6 - End
-
         // TODO: Lab 4.7 (Stretch goal) - Let the AI route sources to the display
         // Hint: AddVideoRouting describes a whole display in one call: "video_routing_main", display "Main display", the source
         //       names and types from RoomTools, a signal-detected function per source (P709 has no sync feedback: always true),
@@ -108,19 +73,5 @@ internal static class McpRegistration
         // Add your work below this line
 
         // Lab 4.7 - End
-
-        // REF: Lab 4.7 (Stretch goal) - Let the AI route sources to the display
-        room.AddVideoRouting("video_routing_main",
-            "Video source routing control, but also signal detection and display status", "Main display",
-            sourceNames: tools.SourceNames,
-            signalDetected: sources.Select(_ => (Func<bool>)(() => true)).ToList(),
-            sourceTypes: tools.SourceTypes,
-            currentSourceIndex: tools.GetCurrentSourceIndex,
-            displayPower: tools.IsSystemOn,
-            displayOnline: () => true,
-            displayPowerOn: () => Run("video_routing_main power on", () => tools.SetSystemPowerAsync(true)),
-            displayPowerOff: () => Run("video_routing_main power off", () => tools.SetSystemPowerAsync(false)),
-            selectSource: index => Run("video_routing_main select", () => tools.SelectSourceAsync(index)));
-        // REF: Lab 4.7 - End
     }
 }

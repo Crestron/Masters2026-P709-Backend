@@ -96,11 +96,6 @@ public class ControlSystem : CrestronControlSystem
 
                 // Lab 4.1 - End
 
-                // REF: Lab 4.1 - Register the room with the MCP Gateway
-                _mcpRoom = McpRoom.Create((int)InitialParametersClass.ApplicationNumber, mcp.RegistrationId, mcp.Description,
-                    maxTimeToTurnOnSystemMs: 15000, logLevel: McpLogLevel.Info);
-                // REF: Lab 4.1 - End
-
                 if (_mcpRoom is { } mcpRoom)
                 {
                     mcpHosting = CreateMcpHosting(mcpRoom, mcp, roomConfiguration.RoomName);

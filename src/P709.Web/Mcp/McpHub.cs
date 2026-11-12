@@ -31,21 +31,6 @@ public class McpHub(TroubleshootingService troubleshooting, McpStatus status, IL
 
     // Lab 4.5 - End
 
-    // REF: Lab 4.5 - Give the troubleshooting UI its query and commands
-    /// <summary>Query: what the troubleshooting panel should show now.</summary>
-    public TroubleshootingState GetTroubleshootingState() => troubleshooting.State;
-
-    /// <summary>
-    /// Command: starts a troubleshooting conversation. Returns at once: Claude's turn can take a while, and its progress
-    /// arrives as <see cref="TroubleshootingStateChangedEvent"/>.
-    /// </summary>
-    public void StartTroubleshooting() => RunInBackground("start troubleshooting", troubleshooting.StartAsync);
-
-    /// <summary>Command: answers Claude's question with the option at <paramref name="optionIndex"/>. Returns at once, as Start does.</summary>
-    public void AnswerTroubleshooting(int optionIndex) =>
-        RunInBackground("answer troubleshooting", () => troubleshooting.AnswerAsync(optionIndex));
-    // REF: Lab 4.5 - End
-
     /// <summary>Query: the MCP Gateway registration state.</summary>
     public string GetMcpStatus() => status.Value;
 

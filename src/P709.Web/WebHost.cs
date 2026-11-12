@@ -141,11 +141,6 @@ public static class WebHost
 
         // Lab 4.2a - End
 
-        // REF: Lab 4.2a - Register the MCP room tools, and the service that pushes MCP changes to the panels
-        builder.Services.AddSingleton<RoomTools>();
-        builder.Services.AddHostedService<McpHubBroadcaster>();
-        // REF: Lab 4.2a - End
-
         // TODO: Lab 1.1a - Register SignalR, using Newtonsoft.Json for the hub payloads
         // Hint: We want to add the SignalR service to the web app builder.
         //       The returned signalR builder should then be configured to support the Newtonsoft Json Protocol
@@ -218,13 +213,6 @@ public static class WebHost
         // Add your work below this line
 
         // Lab 4.2b - End
-
-        // REF: Lab 4.2b - Map the MCP hub at the room configuration's mcpHubPath
-        if (roomConfiguration.McpHubPath is { } mcpHubPath)
-        {
-            app.MapHub<McpHub>(mcpHubPath);
-        }
-        // REF: Lab 4.2b - End
 
         // We haven't registered any health checks, but the default /health endpoint is
         // still useful to see if the server is running.
