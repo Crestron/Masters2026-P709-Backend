@@ -288,17 +288,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
         // Add your work below this line
 
         // Lab 2.5b - End
-
-        // REF: Lab 2.5b - Route the selected source over NVX
-        var isNvxSource = nvxRouter.HasRoute(sourceId);
-        var isRouted = isNvxSource && await TryRouteAsync(sourceId);
-
-        if (isNvxSource)
-        {
-            roomState.SetStreamRunning(isRouted);
-            await Clients.All.SendAsync("StreamRunningChanged", isRouted);
-        }
-        // REF: Lab 2.5b - End
     }
 
     /// <summary>

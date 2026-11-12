@@ -48,20 +48,7 @@ public static class NvxRequests
 
         // Lab 2.2a - End
 
-        // REF: Lab 2.2a - Build the request that routes the receiver to a multicast address
-        var body = new
-        {
-            Device = new
-            {
-                StreamReceive = new
-                {
-                    Streams = new[] { new { StreamLocation = $"rtsp://{multicastAddress}" } }
-                }
-            }
-        };
-
-        return JsonConvert.SerializeObject(body);
-        // REF: Lab 2.2a - End
+        return null;
     }
 
     /// <summary>Starts the receiver's stream: <c>Device.StreamReceive.Streams[0].Start = true</c>.</summary>
@@ -76,20 +63,7 @@ public static class NvxRequests
 
         // Lab 2.3a - End
 
-        // REF: Lab 2.3a - Build the request that starts the receiver's stream
-        var body = new
-        {
-            Device = new
-            {
-                StreamReceive = new
-                {
-                    Streams = new[] { new { Start = true } }
-                }
-            }
-        };
-
-        return JsonConvert.SerializeObject(body);
-        // REF: Lab 2.3a - End
+        return null;
     }
 
     /// <summary>Stops the receiver's stream: <c>Device.StreamReceive.Streams[0].Stop = true</c>.</summary>
@@ -124,16 +98,6 @@ public static class NvxRequests
 
         // Lab 2.4a - End
 
-        // REF: Lab 2.4a - Build the request that enables or disables the preview images
-        var body = new
-        {
-            Device = new
-            {
-                Preview = new { IsPreviewOutputEnabled = isEnabled }
-            }
-        };
-
-        return JsonConvert.SerializeObject(body);
-        // REF: Lab 2.4a - End
+        return null;
     }
 }

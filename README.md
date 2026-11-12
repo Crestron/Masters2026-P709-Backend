@@ -175,16 +175,6 @@ The tasks are listed below:
 | 2.5a | `WebHost.Build` | Register the NVX router as a singleton | One shared instance (and so one NVX session per device) for the hub and the endpoint |
 | 2.5b | `RoomHub.SelectSource` | Route the selected source over NVX and broadcast its preview URL | Calling a device from a hub method, and reporting its failure to the client |
 | 2.5c | `WebHost.Build` | Map the `/nvx/preview` endpoint | A minimal-API endpoint that proxies an image from a device the panel cannot reach itself |
-| 3.1 | `UI Tasks` | | |
-| 4.1 | `ControlSystem.InitializeSystem` | Create the `McpRoom` from the `mcp` settings | How a program registers a room with the MCP Gateway |
-| 4.2a | `WebHost.Build` | Register `RoomTools` as a singleton and `McpHubBroadcaster` as a hosted service | What every MCP tool calls, and how changes from Claude reach the panels |
-| 4.2b | `WebHost.Build` | Map `McpHub` at the room configuration's `mcpHubPath` | A second hub, for MCP-related communication only |
-| 4.3 | `McpRegistration.Register` | The light level tools (getter, trigger, names), following the worked power example | How MCP tools are described: lists of items, units, a feedback tool and a settling time |
-| 4.4 | `RoomTools.SetLightLevelAsync` | Set a light for the AI and tell every panel | Broadcasting from outside a hub, through `IHubContext`, so the AI's change shows on the panel |
-| 4.5 | `McpHub` | `GetTroubleshootingState`, `StartTroubleshooting`, `AnswerTroubleshooting` | Connecting the provided troubleshooting UI to the AI conversation |
-| Stretch goal | For anybody with time on their hands | | |
-| 4.6 | `McpRegistration.Register` | Lighting preset, volume and mute tools | More of Lab 4.3: digital tools, and single-item tools |
-| 4.7 | `McpRegistration.Register` | Source routing tool (`AddVideoRouting`) | A whole display described in one call |
 
 ## Connection
 

@@ -1,12 +1,9 @@
-using Microsoft.AspNetCore.Http.Connections;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using P709.Core.Configuration;
 using P709.Core.Nvx;
 using P709.Web.Hubs;
 using P709.Web.Infrastructure;
-using P709.Web.Mcp;
 using P709.Web.Nvx;
 
 namespace P709.Web;
@@ -19,30 +16,10 @@ public static class WebHost
     /// <param name="loggerFactory">Optional caller-owned logger factory that receives all web host logging.</param>
     /// <param name="port">Port to listen on, from <c>LabSettings.ApiPort</c>. Never hard-code it: it must also match the port published to the panel. Null leaves Kestrel on its default.</param>
     /// <param name="cancellationToken">Stops the server.</param>
-    /// <param name="mcp">Optional MCP hook-up from the program (Lab 4): the troubleshooting session factory, and a callback given the services once they exist.</param>
-    public static async Task RunAsync(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null, CancellationToken cancellationToken = default, McpHosting? mcp = null)
+    public static async Task RunAsync(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null, CancellationToken cancellationToken = default)
     {
-        var app = Build(roomConfiguration, loggerFactory, port, mcp: mcp);
-        NotifyServicesReady(app, mcp);
+        var app = Build(roomConfiguration, loggerFactory, port);
         await app.RunAsync(cancellationToken);
-    }
-
-    // Hands the program the services so it can register its MCP tools. A failure there must not stop the room's web host.
-    private static void NotifyServicesReady(WebApplication app, McpHosting? mcp)
-    {
-        if (mcp?.OnServicesReady is not { } onServicesReady)
-        {
-            return;
-        }
-
-        try
-        {
-            onServicesReady(app.Services);
-        }
-        catch (Exception exception)
-        {
-            app.Logger.LogError(exception, "MCP could not be started: {Reason}", exception.Message);
-        }
     }
 
     /// <summary>Log category for the NVX going offline and coming back.</summary>
@@ -73,8 +50,7 @@ public static class WebHost
     /// <param name="loggerFactory">Optional caller-owned logger factory that receives all web host logging.</param>
     /// <param name="port">Port to listen on. Null leaves Kestrel on its default.</param>
     /// <param name="nvxReceiver">The client for the NVX receiver. Null makes a real one from the room's <c>nvx</c> section; tests pass a fake.</param>
-    /// <param name="mcp">Optional MCP hook-up (Lab 4). Without it, troubleshooting on the MCP hub reports itself unavailable.</param>
-    public static WebApplication Build(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null, INvxClient? nvxReceiver = null, McpHosting? mcp = null)
+    public static WebApplication Build(RoomConfiguration roomConfiguration, ILoggerFactory? loggerFactory = null, int? port = null, INvxClient? nvxReceiver = null)
     {
         // Embedded hosts have an unrelated working directory and their own process args.
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -118,33 +94,6 @@ public static class WebHost
         // Add your work below this line
 
         // Lab 2.5a - End
-
-        // REF: Lab 2.5a - Register the NVX router as a singleton
-        var nvx = roomConfiguration.Nvx;
-        var receiver = nvxReceiver ?? (nvx is null ? null : new NvxRestClient(nvx.ReceiverAddress, nvx.Username, nvx.Password));
-        builder.Services.AddSingleton(new NvxRouter(nvx, receiver));
-        // REF: Lab 2.5a - End
-
-        // MCP plumbing: the troubleshooting conversation and the gateway registration status, shared by every MCP hub client.
-        // They need nothing from the earlier labs, so registering them is harmless whether or not the MCP hub is mapped.
-        builder.Services.AddSingleton<McpStatus>();
-        builder.Services.AddSingleton(services => new TroubleshootingService(
-            mcp?.CreateTroubleshootingSession,
-            services.GetRequiredService<ILogger<TroubleshootingService>>()));
-
-        // TODO: Lab 4.2a - Register the MCP room tools, and the service that pushes MCP changes to the panels
-        // Hint: RoomTools is what every MCP tool calls. Everything it needs is already registered, so add the type itself as a
-        //       singleton, as was done for the room state in Lab 1.1c. McpHubBroadcaster sends troubleshooting and status changes
-        //       to the panels for the life of the web host: add it as a hosted service.
-        // Ref:  https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-10.0
-        // Add your work below this line
-
-        // Lab 4.2a - End
-
-        // REF: Lab 4.2a - Register the MCP room tools, and the service that pushes MCP changes to the panels
-        builder.Services.AddSingleton<RoomTools>();
-        builder.Services.AddHostedService<McpHubBroadcaster>();
-        // REF: Lab 4.2a - End
 
         // TODO: Lab 1.1a - Register SignalR, using Newtonsoft.Json for the hub payloads
         // Hint: We want to add the SignalR service to the web app builder.
@@ -207,24 +156,6 @@ public static class WebHost
         // Add your work below this line
 
         // Lab 2.5c - End
-
-        // REF: Lab 2.5c - Map the NVX preview endpoint
-        app.MapNvxPreview();
-        // REF: Lab 2.5c - End
-
-        // TODO: Lab 4.2b - Map the MCP hub at the room configuration's mcpHubPath
-        // Hint: Like Lab 1.1b, but for McpHub, and at the path the room configuration gives (the panel reads the same path from
-        //       GetRoomConfiguration). The path is optional: map the hub only when the room has one.
-        // Add your work below this line
-
-        // Lab 4.2b - End
-
-        // REF: Lab 4.2b - Map the MCP hub at the room configuration's mcpHubPath
-        if (roomConfiguration.McpHubPath is { } mcpHubPath)
-        {
-            app.MapHub<McpHub>(mcpHubPath);
-        }
-        // REF: Lab 4.2b - End
 
         // We haven't registered any health checks, but the default /health endpoint is
         // still useful to see if the server is running.
