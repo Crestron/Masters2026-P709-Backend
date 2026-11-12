@@ -153,38 +153,6 @@ The tasks are listed below:
 |---|---|---|---|
 | 0.1 | `RoomConfiguration.Load` | Load and validate the room configuration | Students introduced to the project, see how a user file can be loaded and validated |
 | 0.2 | `ControlSystem.InitializeSystem` | Start the web host on the configured port | How to start an ASP.NET Core host in a Crestron program |
-| 1.1a | `WebHost.Build` | Register SignalR with Newtonsoft.Json | How to configure SignalR to use Newtonsoft.Json for payloads, so that the client can deserialize them |
-| 1.1b | `WebHost.Build` | Map the SignalR rooms hub | Plumbing... How to map a SignalR hub to a URL in an ASP.NET Core host |
-| 1.1c | `WebHost.Build` | Register the room configuration and state as singletons | How to register a singleton service in an ASP.NET Core host, so that the hub can use it |
-| 1.1d | `ControlSystem.OnPanelOnlineStatusChange` | Publish when the panel comes online | How to publish the connection details to the touch panel when it comes online, so that it can connect to the SignalR hub |
-| 1.2a | `RoomHub.GetRoomConfiguration` | Query: return the room configuration | How to implement a SignalR hub method that returns the room configuration to the client upon request |
-| 1.2b | `RoomHub.OnConnectedAsync` | Send the current power state to a new client | How to send the current state of the room to a new client when it connects, so that it can update its UI to match the room state |
-| 1.3 | `RoomHub.SetLightLevel` and `RoomHub.SelectPreset` | Command: set a light level or select a preset, and broadcast the change to every client | More SignalR hub methods, showing how to change the room state and broadcast the change to all clients |
-| 1.4 | `RoomHub.SetVolumeLevel` | Command: set the volume in the room state, and broadcast the new value to every client | More SignalR hub methods, showing how to change the room state and broadcast the change to all clients |
-| Stretch goal | For anybody with time on their hands | | |
-| 1.5a | `UI Project` | Add the shades component to the UI to invoke the existing shades code | |
-| 1.5b+c | `RoomHub.StartSystemAsync` | Broadcast each step of the power-up/down sequence to clients asynchronously | Asynchronous broadcasts to clients |
-| 2.1a | `NvxRestClient.LoginAsync` | Send the username and password to the NVX as a web form (POST `/userlogin.html`) | A cookie-based REST login is just a form post; the client keeps the cookies it gets back |
-| 2.1b | `NvxRestClient.LoginAsync` | Check the login worked: the NVX set the `AuthByPasswd` cookie | How to tell a login succeeded, and failing with a message that says why |
-| 2.2a | `NvxRequests.SetReceiveMulticastAddress` | Build the CresNext body that points the receiver at a multicast address: `StreamLocation` set to `rtsp://<multicast address>` | The shape of an NVX POST: a partial object rooted at `Device`, written as a C# anonymous object and serialised with `JsonConvert` |
-| 2.2b | `NvxRouter.RouteSourceAsync` | Route a source: set the receiver's multicast address, start it, enable its preview | Turning a room-level command into device calls |
-| 2.3a | `NvxRequests.StartReceive` | Build the Start trigger body (`StopReceive` is the worked example) | Trigger properties on stream arrays |
-| 2.3b | `NvxRouter.SetStreamRunningAsync` | Start or stop the receiver's stream | |
-| 2.4a | `NvxRequests.SetPreviewEnabled` | Build the body that turns preview images on or off | The preview "enable" switch, `IsPreviewOutputEnabled` |
-| 2.4b | `NvxRouter.GetPreviewImageAsync` | Fetch the largest available preview image from the receiver | |
-| 2.5a | `WebHost.Build` | Register the NVX router as a singleton | One shared instance (and so one NVX session per device) for the hub and the endpoint |
-| 2.5b | `RoomHub.SelectSource` | Route the selected source over NVX and broadcast its preview URL | Calling a device from a hub method, and reporting its failure to the client |
-| 2.5c | `WebHost.Build` | Map the `/nvx/preview` endpoint | A minimal-API endpoint that proxies an image from a device the panel cannot reach itself |
-| 3.1 | `UI Tasks` | | |
-| 4.1 | `ControlSystem.InitializeSystem` | Create the `McpRoom` from the `mcp` settings | How a program registers a room with the MCP Gateway |
-| 4.2a | `WebHost.Build` | Register `RoomTools` as a singleton and `McpHubBroadcaster` as a hosted service | What every MCP tool calls, and how changes from Claude reach the panels |
-| 4.2b | `WebHost.Build` | Map `McpHub` at the room configuration's `mcpHubPath` | A second hub, for MCP-related communication only |
-| 4.3 | `McpRegistration.Register` | The light level tools (getter, trigger, names), following the worked power example | How MCP tools are described: lists of items, units, a feedback tool and a settling time |
-| 4.4 | `RoomTools.SetLightLevelAsync` | Set a light for the AI and tell every panel | Broadcasting from outside a hub, through `IHubContext`, so the AI's change shows on the panel |
-| 4.5 | `McpHub` | `GetTroubleshootingState`, `StartTroubleshooting`, `AnswerTroubleshooting` | Connecting the provided troubleshooting UI to the AI conversation |
-| Stretch goal | For anybody with time on their hands | | |
-| 4.6 | `McpRegistration.Register` | Lighting preset, volume and mute tools | More of Lab 4.3: digital tools, and single-item tools |
-| 4.7 | `McpRegistration.Register` | Source routing tool (`AddVideoRouting`) | A whole display described in one call |
 
 ## Connection
 

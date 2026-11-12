@@ -1,16 +1,14 @@
 using Crestron.SimplSharp;
 using Crestron.SimplSharpPro;
 using Crestron.SimplSharpPro.UI;
-using CrestronAgentLib.Logging;
 using CrestronAgentLib.SimplSharpPro;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using P709.Core.Configuration;
 using P709.Core.Connection;
 using P709.Web;
-using P709.Web.Mcp;
-using CrestronThread = Crestron.SimplSharpPro.CrestronThread.Thread;
 using CrestronDirectory = Crestron.SimplSharp.CrestronIO.Directory;
+using CrestronThread = Crestron.SimplSharpPro.CrestronThread.Thread;
 
 namespace P709.Crestron;
 
@@ -79,42 +77,6 @@ public class ControlSystem : CrestronControlSystem
         var loggerFactory = _loggerFactory;
         var cancellationToken = _shutdown.Token;
 
-        // What the web host needs to connect MCP. Null leaves MCP off; the room works exactly as before.
-        McpHosting? mcpHosting = null;
-
-        if (settings.Mcp is { } mcp)
-        {
-            try
-            {
-                // TODO: Lab 4.1 - Register the room with the MCP Gateway
-                // Hint: Create an McpRoom and keep it in _mcpRoom. McpRoom.Create takes this program's number
-                //       (InitialParametersClass.ApplicationNumber), the registration id and description from the mcp settings,
-                //       15000 ms for the system to turn on, and McpLogLevel.Info. Everything else (the tools, the troubleshooting
-                //       sessions, connecting to the gateway) is set up from it below and in StartMcp.
-                // Ref:  The README of the CrestronAgentLib.SimplSharpPro package (packages/), "Quick Start"
-                // Add your work below this line
-
-                // Lab 4.1 - End
-
-                // REF: Lab 4.1 - Register the room with the MCP Gateway
-                _mcpRoom = McpRoom.Create((int)InitialParametersClass.ApplicationNumber, mcp.RegistrationId, mcp.Description,
-                    maxTimeToTurnOnSystemMs: 15000, logLevel: McpLogLevel.Info);
-                // REF: Lab 4.1 - End
-
-                if (_mcpRoom is { } mcpRoom)
-                {
-                    mcpHosting = CreateMcpHosting(mcpRoom, mcp, roomConfiguration.RoomName);
-                }
-            }
-            catch (Exception exception)
-            {
-                // MCP is an extra: without it the room must still start, exactly as before Lab 4.
-                ErrorLog.Error("MCP not started: {0}", exception.Message);
-                _mcpRoom = null;
-                mcpHosting = null;
-            }
-        }
-
         // TODO: Lab 0.2 - Start the non-Crestron web host on the configured port
         // Hint: The control system should spawn a new long-running task.  This will call our Web project
         //       static WebHost run method.  This method will take the room config, logger factory, port and cancellation token
@@ -124,73 +86,7 @@ public class ControlSystem : CrestronControlSystem
 
         // Lab 0.2 - End
 
-        // REF: Lab 0.2 - Start the non-Crestron web host on the configured port
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await WebHost.RunAsync(roomConfiguration, loggerFactory, settings.ApiPort, cancellationToken, mcpHosting);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                ErrorLog.Notice("Normal Shutdown");
-                // Normal shutdown.
-            }
-            catch (Exception exception)
-            {
-                ErrorLog.Error("Web host failed: {0}", exception);
-            }
-        }, cancellationToken);
-        // REF: Lab 0.2 - End
-
         ErrorLog.Notice($"Control System Initialized (API port {settings.ApiPort})");
-    }
-
-    // What the web host needs from the MCP room: a troubleshooting session per conversation (only with an API key), and a
-    // callback, once its services exist, that registers the tools and connects to the gateway.
-    private McpHosting CreateMcpHosting(McpRoom mcpRoom, McpSettings mcp, string roomName)
-    {
-        Func<ITroubleshootingSession>? createSession = mcp.IsApiKeyConfigured
-            ? () => new TroubleshootingSessionAdapter(mcpRoom.CreateTroubleshootingSession(mcp.AnthropicApiKey!))
-            : null;
-
-        return new McpHosting(createSession, services => StartMcp(mcpRoom, services, roomName));
-    }
-
-    // Registers the room's MCP tools against the web host's RoomTools, reports the gateway registration state to the panels,
-    // and connects to the gateway. In the earlier labs' versions RoomTools is not registered yet, so MCP is skipped.
-    private void StartMcp(McpRoom mcpRoom, IServiceProvider services, string roomName)
-    {
-        var tools = services.GetService<RoomTools>();
-
-        if (tools is null)
-        {
-            ErrorLog.Warn("MCP tools not registered; MCP not started");
-            return;
-        }
-
-        var logger = _loggerFactory!.CreateLogger("P709.Mcp");
-        var status = services.GetService<McpStatus>();
-
-        McpRegistration.Register(mcpRoom, tools, logger);
-
-        mcpRoom.RegistrationStateChanged += state =>
-        {
-            logger.LogInformation("MCP registration: {State}", state);
-            status?.Set(state.ToString());
-        };
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await mcpRoom.StartAsync(roomName);
-            }
-            catch (Exception exception)
-            {
-                logger.LogError(exception, "MCP could not connect to the gateway: {Reason}", exception.Message);
-            }
-        });
     }
 
     // A (re)connecting panel always gets the current connection details.
@@ -201,13 +97,6 @@ public class ControlSystem : CrestronControlSystem
         // Add your work below this line
 
         // Lab 1.1d - End
-
-        // REF: Lab 1.1d - Publish the connection details whenever the panel comes online
-        if (args.DeviceOnLine && _publisher is not null && !_publisher.Publish())
-        {
-            ErrorLog.Warn("No host address available to publish SignalR connection details");
-        }
-        // REF: Lab 1.1d - End
     }
 
     private void OnProgramStatusEvent(eProgramStatusEventType programEventType)

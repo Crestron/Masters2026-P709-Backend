@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using P709.Core.Configuration;
 using P709.Core.Connection;
-using P709.Core.Nvx;
-using P709.Web.Nvx;
 
 namespace P709.Web.Hubs;
 
@@ -10,7 +8,7 @@ namespace P709.Web.Hubs;
 /// Hub the front-end connects to. Exposes the configuration query plus commands and their corresponding change events,
 /// per the Unified Room Control API.
 /// </summary>
-public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, NvxRouter nvxRouter, ILogger<RoomHub> logger) : Hub
+public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, ILogger<RoomHub> logger) : Hub
 {
     /// <summary>URL path the hub is mapped to: the same path published to the panel in the connection details.</summary>
     public const string Path = ConnectionDetails.HubPath;
@@ -26,11 +24,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
 
     // Lab 1.2a - End
 
-    // REF: Lab 1.2a - Query: return the room configuration to the client
-    /// <summary>Query: the front-end calls this after connecting to learn how to build its UI.</summary>
-    public RoomConfiguration GetRoomConfiguration() => roomConfiguration;
-    // REF: Lab 1.2a - End
-
     // TODO: Lab 1.3 - Hook up the lighting SignalR commands
     // Hint: Add public methods for each of the commands for setting the light level and selecting a preset.
     //       Each method should update the roomState and broadcast the corresponding change event to all clients.
@@ -38,42 +31,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
     // Add your work below this line
 
     // Lab 1.3 - End
-
-    // REF: Lab 1.3 - Hook up the lighting SignalR commands
-    /// <summary>Lighting command: sets a light's level.</summary>
-    /// <remarks>Note! The usual C# Async naming convention is not used here.</remarks>
-    public async Task SetLightLevel(string lightId, int levelPercent)
-    {
-        roomState.SetLightLevel(lightId, levelPercent);
-        await Clients.All.SendAsync("LightLevelChanged", lightId, levelPercent);
-    }
-
-    /// <summary>Lighting command: recalls a preset, applying and broadcasting each light level it sets, then broadcasting PresetSelected.</summary>
-    public async Task SelectPreset(SelectPresetRequest request)
-    {
-        if (request is null)
-        {
-            return;
-        }
-
-        var preset = roomConfiguration.LightingPresets.FirstOrDefault(p => p.Id == request.PresetId);
-
-        if (preset is null)
-        {
-            throw new HubException($"Unknown preset id \"{request.PresetId}\".");
-        }
-
-        foreach (var level in preset.Levels)
-        {
-            roomState.SetLightLevel(level.LightId, level.LevelPercent);
-
-            await Clients.All.SendAsync("LightLevelChanged", level.LightId, level.LevelPercent);
-        }
-
-        roomState.SetSelectedPreset(request.PresetId);
-        await Clients.All.SendAsync("PresetSelected", request.PresetId);
-    }
-    // REF: Lab 1.3 - End
 
     /// <summary>
     /// Query: a snapshot of the whole room state, so a client that has just connected (or reconnected) can show the room
@@ -223,15 +180,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
 
     // Lab 1.4 - End
 
-    // REF: Lab 1.4 - Command: set the volume level in the room state
-    /// <summary>Volume command: sets the volume level.</summary>
-    public async Task SetVolumeLevel(int levelPercent)
-    {
-        roomState.SetVolumeLevel(levelPercent);
-        await Clients.All.SendAsync("VolumeLevelChanged", levelPercent);
-    }
-    // REF: Lab 1.4 - End
-
     // TODO: Lab 1.2b - Implement the Hub.OnConnectedAsync override
     // Hint: Implement an override for the Hub<> connection event handler
     //       call the base implementation to maintain the standard behaviour
@@ -240,15 +188,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
     // Add your work below this line
 
     // Lab 1.2b - End
-
-    // REF: Lab 1.2b - Implement the Hub.OnConnectedAsync override
-    /// <inheritdoc />
-    public override async Task OnConnectedAsync()
-    {
-        await base.OnConnectedAsync();
-        await Clients.Caller.SendAsync("SystemPowerStateChanged", roomState.SystemPower);
-    }
-    // REF: Lab 1.2b - End
 
     /// <summary>Page synchronization command: tells other clients which page is current.</summary>
     public async Task SetCurrentPage(PageKey pageKey)
@@ -265,9 +204,7 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
     }
 
     /// <summary>
-    /// Source routing command: selects the active source. If the system is off, this also starts it up. A source that arrives
-    /// over NVX is routed to the display first. The source is selected even if the NVX fails (it may be offline), so the rest
-    /// of the room keeps working; the stream is then reported as not running.
+    /// Source routing command: selects the active source. If the system is off, this also starts it up.
     /// </summary>
     public async Task SelectSource(string sourceId)
     {
@@ -278,107 +215,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
 
         roomState.SelectSource(sourceId);
         await Clients.All.SendAsync("SelectedSourceChanged", sourceId);
-
-        // TODO: Lab 2.5b - Route the selected source over NVX
-        // Hint: Only for a source the nvxRouter HasRoute for: try to route it with TryRouteAsync BEFORE changing the room
-        //       state. Select the source either way: an offline NVX must not stop the room working. After
-        //       SelectedSourceChanged has been sent, record whether the stream is running (whether the route worked) and
-        //       broadcast StreamRunningChanged.
-        // Ref:  The README.md holds definition of the SignalR API
-        // Add your work below this line
-
-        // Lab 2.5b - End
-
-        // REF: Lab 2.5b - Route the selected source over NVX
-        var isNvxSource = nvxRouter.HasRoute(sourceId);
-        var isRouted = isNvxSource && await TryRouteAsync(sourceId);
-
-        if (isNvxSource)
-        {
-            roomState.SetStreamRunning(isRouted);
-            await Clients.All.SendAsync("StreamRunningChanged", isRouted);
-        }
-        // REF: Lab 2.5b - End
-    }
-
-    /// <summary>
-    /// Query: the URL of the NVX receiver's preview image, <c>/nvx/preview</c>, relative to the hub's host. Null when the room
-    /// has no NVX receiver.
-    /// </summary>
-    public string? GetPreviewUrl() => nvxRouter.IsConfigured ? NvxPreviewEndpoint.Path : null;
-
-    /// <summary>NVX command: starts or stops the receiver's stream, keeping the routed source.</summary>
-    public async Task SetStreamRunning(bool isRunning)
-    {
-        if (!nvxRouter.IsConfigured)
-        {
-            throw new HubException("This room has no NVX receiver.");
-        }
-
-        await RunNvxAsync(isRunning ? "Could not start the stream" : "Could not stop the stream",
-            () => nvxRouter.SetStreamRunningAsync(isRunning, Context.ConnectionAborted));
-
-        roomState.SetStreamRunning(isRunning);
-        await Clients.All.SendAsync("StreamRunningChanged", isRunning);
-    }
-
-    /// <summary>NVX command: turns the receiver's preview images on or off.</summary>
-    public async Task SetPreviewEnabled(bool isEnabled)
-    {
-        if (!nvxRouter.IsConfigured)
-        {
-            throw new HubException("This room has no NVX receiver.");
-        }
-
-        await RunNvxAsync(isEnabled ? "Could not turn the preview on" : "Could not turn the preview off",
-            () => nvxRouter.SetPreviewEnabledAsync(isEnabled, Context.ConnectionAborted));
-
-        await Clients.All.SendAsync("PreviewEnabledChanged", isEnabled);
-    }
-
-    // Routes an NVX source, returning whether it worked. A failure is logged (see LogNvxFailure) but never thrown: the source
-    // is selected whether or not the NVX is there.
-    private async Task<bool> TryRouteAsync(string sourceId)
-    {
-        try
-        {
-            return await nvxRouter.RouteSourceAsync(sourceId, Context.ConnectionAborted);
-        }
-        catch (NvxException exception)
-        {
-            LogNvxFailure($"Could not route source \"{sourceId}\"", exception);
-            return false;
-        }
-    }
-
-    // Runs an NVX call. A failure is logged (see LogNvxFailure), then turned into a HubException so the client sees why,
-    // with the NVX's own message included.
-    private async Task RunNvxAsync(string failure, Func<Task> nvxCall)
-    {
-        try
-        {
-            await nvxCall();
-        }
-        catch (NvxException exception)
-        {
-            LogNvxFailure(failure, exception);
-            throw new HubException($"{failure}: {exception.Message}");
-        }
-    }
-
-    // An NVX that refused a request is logged as an error (on a processor: the Crestron error log, through the program's
-    // logger factory). An offline NVX is only logged at debug level: its going offline and coming back are each logged once
-    // by the web host, so a panel used while it is offline does not fill the error log.
-    private void LogNvxFailure(string failure, NvxException exception)
-    {
-        if (exception is NvxUnreachableException)
-        {
-            logger.LogDebug("{Failure}: {Reason}", failure, exception.Message);
-        }
-        else
-        {
-            logger.LogError(exception, "{Failure}: {Reason}", failure, exception.Message);
-        }
     }
 
     // Runs the Off -> Starting -> On sequence, broadcasting each transition.
@@ -392,16 +228,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
         // Add your work below this line
 
         // Lab 1.5b - End
-
-        // REF: Lab 1.5b - Broadcast each step of the power-up sequence (Starting, then On)
-        roomState.SetSystemPower(SystemPowerState.Starting);
-        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Starting);
-
-        await Task.Delay(PowerSequenceDuration);
-
-        roomState.SetSystemPower(SystemPowerState.On);
-        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.On);
-        // REF: Lab 1.5b - End
     }
 
     // Runs the On -> Stopping -> Off sequence, broadcasting each transition.
@@ -415,16 +241,6 @@ public class RoomHub(RoomConfiguration roomConfiguration, RoomState roomState, N
         // Add your work below this line
 
         // Lab 1.5c - End
-
-        // REF: Lab 1.5c - Broadcast each step of the power-off sequence (Stopping, then Off)
-        roomState.SetSystemPower(SystemPowerState.Stopping);
-        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Stopping);
-
-        await Task.Delay(PowerSequenceDuration);
-
-        roomState.SetSystemPower(SystemPowerState.Off);
-        await Clients.All.SendAsync("SystemPowerStateChanged", SystemPowerState.Off);
-        // REF: Lab 1.5c - End
     }
 }
 
